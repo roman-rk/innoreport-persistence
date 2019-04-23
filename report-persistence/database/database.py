@@ -12,24 +12,50 @@ def connect_to_db():
     dburl = r"http://10.90.138.222:7474"
     GRAPH = Graph(dburl)
 
-def db_get_report_info(id):
+def db_match_report(id):
     if GRAPH == None:
         raise Exception("Not connected to the database")
     matcher = NodeMatcher(GRAPH)
-    return list(matcher.match("Report").where("_.id =~ " + str(id)))
+    rep = Report()
+    rep.id = id
+    return list(map(clear_report, rep.match(graph)))
 
-def db_get_all_reports(id, user_email):
+def db_get_all_reports():
     if GRAPH == None:
         raise Exception("Not connected to the database")
     matcher = NodeMatcher(GRAPH)
-    return matcher.match("Report")
+    return list(map(clear_report, list(matcher.match("Report"))))
 
-def db_post_user(data):
-    report = make_report(data)
-    return GRAPH.create(user)
+def db_get_report_history(token):
+    if GRAPH == None:
+        raise Exception("Not connected to the database")
+    u = User()
+    u.token = token
+    GRAPH.pull(u)
+    result = list()
+    for rep in u.SUBMITS:
+        GRAPH.pull(rep)
+        result.add(clear_report(rep))
+    return result
 
-def db_update_report(data):
+
+def db_post_report(data):
+    if GRAPH == None:
+        raise Exception("Not connected to the database")
     if data["id"] == None:
         raise Exception("Cannot find report without id")
     report = make_report(data)
-    return GRAPH.push(user)
+    GRAPH.pull(report)
+    GRAPH.create(report)
+    GRAPH.pull(report)
+    return report.id
+
+def db_update_report(data):
+    if GRAPH == None:
+        raise Exception("Not connected to the database")
+    if data["id"] == None:
+        raise Exception("Cannot find report without id")
+    report = make_report(data)
+    GRAPH.push(report)
+    GRAPH.pull(report)
+    return report.id

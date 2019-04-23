@@ -1,8 +1,7 @@
-from py2neo.ogm import GraphObject, Property, RelatedTo
+from py2neo.ogm import GraphObject, Property, RelatedTo, RelatedFrom
 
 class Report(GraphObject):
     __primarykey__ = "id"
-
     id = Property()
     title = Property()
     description = Property()
@@ -11,8 +10,16 @@ class Report(GraphObject):
     imagePath = Property()
     status = Property()
     tags = Property()
+    SUBMITS = RelatedFrom("User")
+    BELONGS = RelatedTo("Entity")
 
-    submits = RelatedTo("Entity")
+class User(GraphObject):
+    __primarykey__ = "token"
+    name = Property()
+    email = Property()
+    password = Property()
+    token = Property()
+    SUBMITS = RelatedTo("Report")
 
 def make_report(data):
     report = Report()
@@ -25,3 +32,6 @@ def make_report(data):
     if 'status' in data.keys: user.status = data['status']
     if 'tags' in data.keys: user.tags = data['tags']
     return report
+
+def clear_report(rep):
+    return dict((name, getattr(rep, name)) for name in dir(rep) if not callable(getattr(rep, name)) and not name.startswith('__') and not name.startswith('_') and not str(getattr(rep, name)).startswith("<py2neo.ogm"))

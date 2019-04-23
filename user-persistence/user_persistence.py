@@ -4,7 +4,7 @@ Flask application: user_persistence
 Persistence service, which creates requests to the
 database graph database.
 The service handles requests for User object.
-Model of the object is defined in the Model/user.py
+Model of the object is defined in the database/user.py
 '''
 
 from flask import Flask, request, json
@@ -13,7 +13,7 @@ from database.database import *
 app = Flask(__name__)
 connect_to_db()
 
-# Search user with specified <email> 
+# Search user with specified <email>
 @app.route("/innoreports/user/getUser", methods=['POST'])
 def get_user_by_email():
     assert request.method == 'POST'

@@ -18,7 +18,7 @@ def db_match_user(email):
     matcher = NodeMatcher(GRAPH)
     user = User()
     user.email = email
-    return list(map(clear_user, user.match(graph)))
+    return list(map(clear_user, user.match(GRAPH)))
 
 def db_post_user(data):
     if GRAPH == None:
@@ -34,4 +34,4 @@ def db_put_token(data):
     user = make_user(data)
     GRAPH.push(user)
     GRAPH.pull(user)
-    return return user.token
+    return user.token

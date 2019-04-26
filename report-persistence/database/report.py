@@ -13,13 +13,24 @@ class Report(GraphObject):
     SUBMITS = RelatedFrom("User")
     BELONGS = RelatedTo("Entity")
 
+# Have to repeat the models in order to build relationships,
+# because services cannot share them
 class User(GraphObject):
-    __primarykey__ = "token"
+    __primarykey__ = "name"
     name = Property()
     email = Property()
     password = Property()
     token = Property()
     SUBMITS = RelatedTo("Report")
+
+class Entity(GraphObject):
+    __primarykey__ = "eId"
+    Name = Property()
+    eId = Property()
+    Email = Property()
+    Address = Property()
+    Tags = Property()
+    BELONGS = RelatedFrom("Report")
 
 def make_report(data):
     report = Report()
@@ -34,4 +45,6 @@ def make_report(data):
     return report
 
 def clear_report(rep):
-    return dict((name, getattr(rep, name)) for name in dir(rep) if not callable(getattr(rep, name)) and not name.startswith('__') and not name.startswith('_') and not str(getattr(rep, name)).startswith("<py2neo.ogm"))
+    return dict((name, getattr(rep, name))
+                for name in dir(rep)
+                if not callable(getattr(rep, name)) and not name.startswith('__') and not name.startswith('_') and not str(getattr(rep, name)).startswith("<py2neo.ogm"))

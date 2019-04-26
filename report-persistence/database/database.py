@@ -16,27 +16,34 @@ def db_match_report(id):
     if GRAPH == None:
         raise Exception("Not connected to the database")
     matcher = NodeMatcher(GRAPH)
+    id = int(id)
+    #print(id)
+    #print(GRAPH)
     rep = Report()
     rep.id = id
-    return list(map(clear_report, rep.match(graph)))
+    #print(clear_report(rep))
+    GRAPH.pull(rep)
+    return str(clear_report(rep))
 
 def db_get_all_reports():
     if GRAPH == None:
         raise Exception("Not connected to the database")
     matcher = NodeMatcher(GRAPH)
-    return list(map(clear_report, list(matcher.match("Report"))))
+    matches = list(map(dict, list(matcher.match("Report"))))
+    print(matches)
+    return str(matches)
 
 def db_get_report_history(token):
     if GRAPH == None:
         raise Exception("Not connected to the database")
     u = User()
-    u.token = token
+    u.name = token
     GRAPH.pull(u)
     result = list()
     for rep in u.SUBMITS:
         GRAPH.pull(rep)
-        result.add(clear_report(rep))
-    return result
+        result.append(clear_report(rep))
+    return str(result)
 
 
 def db_post_report(data):
@@ -48,7 +55,7 @@ def db_post_report(data):
     GRAPH.pull(report)
     GRAPH.create(report)
     GRAPH.pull(report)
-    return report.id
+    return str(report.id)
 
 def db_update_report(data):
     if GRAPH == None:
@@ -58,4 +65,4 @@ def db_update_report(data):
     report = make_report(data)
     GRAPH.push(report)
     GRAPH.pull(report)
-    return report.id
+    return str(report.id)

@@ -25,6 +25,7 @@ def put_token():
     assert request.method == 'PUT'
     if request.headers['Content-Type'] == 'application/json':
         return db_put_token(json.loads(request.json)[0])
+
 # Creation of the new user in database
 @app.route("/innoreports/user/createUser", methods=['POST'])
 def post_user():

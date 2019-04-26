@@ -13,20 +13,20 @@ from database.database import *
 app = Flask(__name__)
 connect_to_db()
 
-@app.route("/innoreports/report/getReport?<id>", methods=['GET'])
-def get_report_by_id(id):
+@app.route("/innoreports/report/getReport", methods=['GET'])
+def get_report_by_id():
     assert request.method == 'GET'
-    return db_match_report(id)
+    return db_match_report(request.args.get('id', ''))
 
 @app.route("/innoreports/report/getAllReports", methods=['GET'])
 def get_all_reports():
     assert request.method == 'GET'
     return db_get_all_reports()
 
-@app.route("/innoreports/report/getReportHistory?<token>", methods=['GET'])
-def get_report_history(token):
+@app.route("/innoreports/report/getReportHistory", methods=['GET'])
+def get_report_history():
     assert request.method == 'GET'
-    return db_get_report_history(token)
+    return db_get_report_history(request.args.get('token', ''))
 
 # Update of the user's token
 @app.route("/innoreports/report/updateReport", methods=['PUT'])
@@ -34,8 +34,10 @@ def update_report():
     assert request.method == 'PUT'
     if request.headers['Content-Type'] == 'application/json':
         return db_update_report(json.loads(request.json)[0])
+
+
 # Creation of the new user in database
-@app.route("/innoreports/user/createReport", methods=['POST'])
+@app.route("/innoreports/report/createReport", methods=['POST'])
 def post_report():
     assert request.method == 'POST'
     if request.headers['Content-Type'] == 'application/json':

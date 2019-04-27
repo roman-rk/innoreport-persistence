@@ -1,8 +1,9 @@
 from py2neo.ogm import GraphObject, Property, RelatedTo, RelatedFrom
+from py2neo import Graph
 
 class Report(GraphObject):
-    __primarykey__ = "id"
-    id = Property()
+    __primarykey__ = "rId"
+    rId = Property()
     title = Property()
     description = Property()
     location = Property()
@@ -16,7 +17,7 @@ class Report(GraphObject):
 # Have to repeat the models in order to build relationships,
 # because services cannot share them
 class User(GraphObject):
-    __primarykey__ = "name"
+    __primarykey__ = "email"
     name = Property()
     email = Property()
     password = Property()
@@ -30,18 +31,17 @@ class Entity(GraphObject):
     Email = Property()
     Address = Property()
     Tags = Property()
-    BELONGS = RelatedFrom("Report")
 
 def make_report(data):
     report = Report()
-    if 'id' in data.keys: user.id = data['id']
-    if 'title' in data.keys: user.title = data['title']
-    if 'description' in data.keys: user.description = data['password']
-    if 'location' in data.keys: user.location = data['location']
-    if 'date' in data.keys: user.date = data['date']
-    if 'imagePath' in data.keys: user.imagePath = data['imagePath']
-    if 'status' in data.keys: user.status = data['status']
-    if 'tags' in data.keys: user.tags = data['tags']
+    if 'rId' in data.keys(): report.rId = data['rId']
+    if 'title' in data.keys(): report.title = data['title']
+    if 'description' in data.keys(): report.description = data['description']
+    if 'location' in data.keys(): report.location = data['location']
+    if 'date' in data.keys(): report.date = data['date']
+    if 'imagePath' in data.keys(): report.imagePath = data['imagePath']
+    if 'status' in data.keys(): report.status = data['status']
+    if 'tags' in data.keys(): report.tags = data['tags']
     return report
 
 def clear_report(rep):

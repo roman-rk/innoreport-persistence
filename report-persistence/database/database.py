@@ -16,12 +16,8 @@ def db_match_report(id):
     if GRAPH == None:
         raise Exception("Not connected to the database")
     matcher = NodeMatcher(GRAPH)
-    id = int(id)
-    #print(id)
-    #print(GRAPH)
     rep = Report()
-    rep.id = id
-    #print(clear_report(rep))
+    rep.rId = id
     GRAPH.pull(rep)
     return str(clear_report(rep))
 
@@ -33,11 +29,11 @@ def db_get_all_reports():
     print(matches)
     return str(matches)
 
-def db_get_report_history(token):
+def db_get_report_history(email):
     if GRAPH == None:
         raise Exception("Not connected to the database")
     u = User()
-    u.name = token
+    u.email = email
     GRAPH.pull(u)
     result = list()
     for rep in u.SUBMITS:
@@ -49,20 +45,42 @@ def db_get_report_history(token):
 def db_post_report(data):
     if GRAPH == None:
         raise Exception("Not connected to the database")
-    if data["id"] == None:
+    if data["rId"] == None:
         raise Exception("Cannot find report without id")
     report = make_report(data)
-    GRAPH.pull(report)
+    if 'SUBMITS' in data.keys():
+        u = User()
+        u.email = data['SUBMITS']
+        GRAPH.pull(u)
+        report.SUBMITS.add(u)
+    if 'BELONGS' in data.keys():
+        for id in data['BELONGS']:
+            e = Entity()
+            e.eId = int(id)
+            GRAPH.pull(e)
+            report.BELONGS.add(e)
     GRAPH.create(report)
+    print(report)
     GRAPH.pull(report)
-    return str(report.id)
+    return str(report.rId)
 
 def db_update_report(data):
     if GRAPH == None:
         raise Exception("Not connected to the database")
-    if data["id"] == None:
+    if data["rId"] == None:
         raise Exception("Cannot find report without id")
     report = make_report(data)
+    if 'SUBMITS' in data.keys():
+        u = User()
+        u.email = data['SUBMITS']
+        GRAPH.pull(u)
+        report.SUBMITS.append(u)
+    if 'BELONGS' in data.keys():
+        e = Entity()
+        for id in data['BELONGS']:
+            e.eId = id
+            GRAPH.pull(e)
+            report.BELONGS.append(e)
     GRAPH.push(report)
     GRAPH.pull(report)
-    return str(report.id)
+    return str(report.rId)

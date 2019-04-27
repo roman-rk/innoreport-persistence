@@ -9,26 +9,27 @@ Model of the object is defined in the database/user.py
 
 from flask import Flask, request, json
 from database.database import *
+import ast
 
 app = Flask(__name__)
 connect_to_db()
 
 # Search user with specified <email>
 @app.route("/innoreports/user/getUser", methods=['POST'])
-def get_user_by_email():
+def get_user_by_token():
     assert request.method == 'POST'
-    return db_match_user(request.form['email'])
+    return db_match_user(request.form['token'])
 
 # Update of the user's token
 @app.route("/innoreports/user/updateToken", methods=['PUT'])
 def put_token():
     assert request.method == 'PUT'
     if request.headers['Content-Type'] == 'application/json':
-        return db_put_token(json.loads(request.json)[0])
+        return db_put_token(ast.literal_eval(request.json))
 
 # Creation of the new user in database
 @app.route("/innoreports/user/createUser", methods=['POST'])
 def post_user():
     assert request.method == 'POST'
     if request.headers['Content-Type'] == 'application/json':
-            return db_post_user(json.loads(request.json)[0])
+        return db_post_user(ast.literal_eval(request.json))

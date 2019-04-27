@@ -9,6 +9,7 @@ Model of the object is defined in the database/report.py
 
 from flask import Flask, request, json
 from database.database import *
+import ast
 
 app = Flask(__name__)
 connect_to_db()
@@ -26,14 +27,14 @@ def get_all_reports():
 @app.route("/innoreports/report/getReportHistory", methods=['GET'])
 def get_report_history():
     assert request.method == 'GET'
-    return db_get_report_history(request.args.get('token', ''))
+    return db_get_report_history(request.args.get('email', ''))
 
 # Update of the user's token
 @app.route("/innoreports/report/updateReport", methods=['PUT'])
 def update_report():
     assert request.method == 'PUT'
     if request.headers['Content-Type'] == 'application/json':
-        return db_update_report(json.loads(request.json)[0])
+        return db_update_report(ast.literal_eval(request.json))
 
 
 # Creation of the new user in database
@@ -41,4 +42,4 @@ def update_report():
 def post_report():
     assert request.method == 'POST'
     if request.headers['Content-Type'] == 'application/json':
-            return db_post_report(json.loads(request.json)[0])
+            return db_post_report(ast.literal_eval(request.json))

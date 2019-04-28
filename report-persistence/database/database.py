@@ -1,6 +1,7 @@
 from py2neo import Graph, NodeMatcher
 from database.report import *
 import configparser
+import uuid
 
 GRAPH = None
 
@@ -19,7 +20,8 @@ def db_match_report(id):
     rep = Report()
     rep.rId = id
     GRAPH.pull(rep)
-    return str(clear_report(rep))
+    data = clear_report(rep)
+    return str(data)
 
 def db_get_all_reports():
     if GRAPH == None:
@@ -43,33 +45,34 @@ def db_get_report_history(email):
 
 
 def db_post_report(data):
+    print("test")
     if GRAPH == None:
         raise Exception("Not connected to the database")
-    if data["rId"] == None:
-        raise Exception("Cannot find report without id")
     report = make_report(data)
-    if 'SUBMITS' in data.keys():
+    report.rId = str(uuid.uuid4())
+    print(report)
+    if 'submits' in data.keys():
         u = User()
         u.email = data['SUBMITS']
         GRAPH.pull(u)
         report.SUBMITS.add(u)
-    if 'BELONGS' in data.keys():
+    if 'belongs' in data.keys():
         for id in data['BELONGS']:
             e = Entity()
             e.eId = int(id)
             GRAPH.pull(e)
             report.BELONGS.add(e)
     GRAPH.create(report)
-    print(report)
     GRAPH.pull(report)
-    return str(report.rId)
+    print(report.__primaryvalue__)
+    return str(report.__primaryvalue__)
 
 def db_update_report(data):
     if GRAPH == None:
         raise Exception("Not connected to the database")
-    if data["rId"] == None:
-        raise Exception("Cannot find report without id")
+#        raise Exception("Cannot find report without id")
     report = make_report(data)
+    report.__primaryvalue__ = data["id"]
     if 'SUBMITS' in data.keys():
         u = User()
         u.email = data['SUBMITS']
@@ -83,4 +86,4 @@ def db_update_report(data):
             report.BELONGS.append(e)
     GRAPH.push(report)
     GRAPH.pull(report)
-    return str(report.rId)
+    return str(report.__id__)

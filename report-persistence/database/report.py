@@ -47,4 +47,7 @@ def make_report(data):
 def clear_report(rep):
     return dict((name, getattr(rep, name))
                 for name in dir(rep)
-                if not callable(getattr(rep, name)) and not name.startswith('__') and not name.startswith('_') and not str(getattr(rep, name)).startswith("<py2neo.ogm"))
+                if not callable(getattr(rep, name))
+                and not name.startswith('__')
+                and not name.startswith('_')
+                and not str(getattr(rep, name)).startswith("<py2neo.ogm"))

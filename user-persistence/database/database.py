@@ -12,12 +12,12 @@ def connect_to_db():
     dburl = r"http://10.90.138.222:7474"
     GRAPH = Graph(dburl)
 
-def db_match_user(token):
+def db_match_user(email):
     if GRAPH == None:
         raise Exception("Not connected to the database")
-    matcher = NodeMatcher(GRAPH)
     user = User()
-    user.token = token
+    user.email = email
+    print(user)
     GRAPH.pull(user)
     return str(clear_user(user))
 
@@ -33,8 +33,11 @@ def db_post_user(data):
 def db_put_token(data):
     if GRAPH == None:
         raise Exception("Not connected to the database")
-    user = make_user(data)
+    user = User()
+    user.email = data['email']
     print(str(user))
+    GRAPH.pull(user)
+    user.token = data['token']
     GRAPH.push(user)
     GRAPH.pull(user)
     return str(user.token)

@@ -18,18 +18,19 @@ connect_to_db()
 @app.route("/innoreports/user/getUser", methods=['POST'])
 def get_user_by_token():
     assert request.method == 'POST'
-    return db_match_user(request.form['token'])
+    print(request.form['email'])
+    return db_match_user(request.form['email'])
 
 # Update of the user's token
 @app.route("/innoreports/user/updateToken", methods=['PUT'])
 def put_token():
     assert request.method == 'PUT'
     if request.headers['Content-Type'] == 'application/json':
-        return db_put_token(ast.literal_eval(request.json))
+        return db_put_token(request.json)
 
 # Creation of the new user in database
 @app.route("/innoreports/user/createUser", methods=['POST'])
 def post_user():
     assert request.method == 'POST'
     if request.headers['Content-Type'] == 'application/json':
-        return db_post_user(ast.literal_eval(request.json))
+        return db_post_user(request.json)

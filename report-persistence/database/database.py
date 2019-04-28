@@ -16,7 +16,6 @@ def connect_to_db():
 def db_match_report(id):
     if GRAPH == None:
         raise Exception("Not connected to the database")
-    matcher = NodeMatcher(GRAPH)
     rep = Report()
     rep.rId = id
     GRAPH.pull(rep)

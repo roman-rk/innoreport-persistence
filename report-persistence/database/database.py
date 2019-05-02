@@ -18,9 +18,7 @@ def db_match_report(id):
     if GRAPH == None:
         raise Exception("Not connected to the database")
     rep = Report()
-    print(id)
     rep.rId = id
-    print(rep)
     GRAPH.pull(rep)
     data = clear_report(rep)
     return str(data)
@@ -47,7 +45,6 @@ def db_get_report_history(email):
 
 
 def db_post_report(data):
-    print("test")
     if GRAPH == None:
         raise Exception("Not connected to the database")
     print(data)
@@ -74,20 +71,21 @@ def db_post_report(data):
 def db_update_report(data):
     if GRAPH == None:
         raise Exception("Not connected to the database")
-#        raise Exception("Cannot find report without id")
-    report = make_report(data)
-    report.__primaryvalue__ = data["id"]
-    if 'SUBMITS' in data.keys():
+    report = Report()
+    report.rId = data['rId']
+    GRAPH.pull(report)
+    report = make_report(data, report)
+    if 'submits' in data.keys():
         u = User()
-        u.email = data['SUBMITS']
+        u.email = data['submits']
         GRAPH.pull(u)
         report.SUBMITS.append(u)
-    if 'BELONGS' in data.keys():
-        e = Entity()
-        for id in data['BELONGS']:
+    if 'belongs' in data.keys():
+        for id in data['belongs']:
+            e = Entityt()
             e.eId = id
             GRAPH.pull(e)
             report.BELONGS.append(e)
     GRAPH.push(report)
     GRAPH.pull(report)
-    return str(report.__id__)
+    return str(report.rId)

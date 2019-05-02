@@ -35,7 +35,7 @@ def get_report_history():
 def update_report():
     assert request.method == 'PUT'
     if request.headers['Content-Type'] == 'application/json':
-        return db_update_report(ast.literal_eval(request.json))
+        return db_update_report(request.json)
 
 
 # Creation of the new user in database
@@ -43,7 +43,4 @@ def update_report():
 def post_report():
     assert request.method == 'POST'
     if request.headers['Content-Type'] == 'application/json':
-            #print(str(request.json))
-            #print(type(request.json))
-            #print(ast.parse(request.json, mode='eval'))
             return db_post_report(request.json)

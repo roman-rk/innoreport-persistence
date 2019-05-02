@@ -2,6 +2,7 @@ from py2neo import Graph, NodeMatcher
 from database.report import *
 import configparser
 import uuid
+import json
 
 GRAPH = None
 
@@ -17,7 +18,9 @@ def db_match_report(id):
     if GRAPH == None:
         raise Exception("Not connected to the database")
     rep = Report()
+    print(id)
     rep.rId = id
+    print(rep)
     GRAPH.pull(rep)
     data = clear_report(rep)
     return str(data)
@@ -47,24 +50,26 @@ def db_post_report(data):
     print("test")
     if GRAPH == None:
         raise Exception("Not connected to the database")
+    print(data)
     report = make_report(data)
     report.rId = str(uuid.uuid4())
     print(report)
     if 'submits' in data.keys():
         u = User()
-        u.email = data['SUBMITS']
+        u.email = data['submits']
         GRAPH.pull(u)
         report.SUBMITS.add(u)
     if 'belongs' in data.keys():
-        for id in data['BELONGS']:
+        for id in data['belongs']:
             e = Entity()
             e.eId = int(id)
             GRAPH.pull(e)
             report.BELONGS.add(e)
+    print(report.rId)
     GRAPH.create(report)
     GRAPH.pull(report)
-    print(report.__primaryvalue__)
-    return str(report.__primaryvalue__)
+    print(report.rId)
+    return str(report.rId)
 
 def db_update_report(data):
     if GRAPH == None:

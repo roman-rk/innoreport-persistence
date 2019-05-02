@@ -7,7 +7,7 @@ The service handles requests for Report object.
 Model of the object is defined in the database/report.py
 '''
 
-from flask import Flask, request, json
+from flask import Flask, request
 from database.database import *
 import ast
 
@@ -17,7 +17,8 @@ connect_to_db()
 @app.route("/innoreports/report/getReport", methods=['GET'])
 def get_report_by_id():
     assert request.method == 'GET'
-    return db_match_report(request.args.get('id', ''))
+    print(request)
+    return json.dumps(db_match_report(request.args.get('id', '')))
 
 @app.route("/innoreports/report/getAllReports", methods=['GET'])
 def get_all_reports():
@@ -42,4 +43,7 @@ def update_report():
 def post_report():
     assert request.method == 'POST'
     if request.headers['Content-Type'] == 'application/json':
-            return db_post_report(ast.literal_eval(request.json))
+            #print(str(request.json))
+            #print(type(request.json))
+            #print(ast.parse(request.json, mode='eval'))
+            return db_post_report(request.json)

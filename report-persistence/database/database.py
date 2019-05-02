@@ -59,7 +59,9 @@ def db_post_report(data):
     if 'belongs' in data.keys():
         for id in data['belongs']:
             e = Entity()
-            e.eId = int(id)
+            if type(id) is str:
+                id = int(id)
+            e.eId = id
             GRAPH.pull(e)
             report.BELONGS.add(e)
     print(report.rId)
@@ -83,6 +85,8 @@ def db_update_report(data):
     if 'belongs' in data.keys():
         for id in data['belongs']:
             e = Entityt()
+            if type(id) is str:
+                id = int(id)
             e.eId = id
             GRAPH.pull(e)
             report.BELONGS.append(e)

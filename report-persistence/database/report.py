@@ -32,8 +32,9 @@ class Entity(GraphObject):
     Address = Property()
     Tags = Property()
 
-def make_report(data):
-    report = Report()
+def make_report(data, report=None):
+    if report is None:
+        report = Report()
     if 'rId' in data.keys(): report.rId = data['rId']
     if 'title' in data.keys(): report.title = data['title']
     if 'description' in data.keys(): report.description = data['description']
@@ -43,17 +44,6 @@ def make_report(data):
     if 'status' in data.keys(): report.status = data['status']
     if 'tags' in data.keys(): report.tags = data['tags']
     return report
-
-def make_report(data, report):
-    if 'title' in data.keys(): report.title = data['title']
-    if 'description' in data.keys(): report.description = data['description']
-    if 'location' in data.keys(): report.location = data['location']
-    if 'date' in data.keys(): report.date = data['date']
-    if 'imagePath' in data.keys(): report.imagePath = data['imagePath']
-    if 'status' in data.keys(): report.status = data['status']
-    if 'tags' in data.keys(): report.tags = data['tags']
-    return report
-
 
 def clear_report(rep):
     return dict((name, getattr(rep, name))
